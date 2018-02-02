@@ -1,4 +1,5 @@
-if (MCE!=undefined && MCE.applicationName=='Converter' && !MCE.finishedLoading) {
+"use strict";
+
 MCE.currency={
 	unambiguous_regexp:null,
 	unambiguous_notation:null,
@@ -14,6 +15,7 @@ MCE.currency={
 
 	refreshRates: function()
 	{
+		return; // TODO FIX CURRENCY
 		if (!MCE.prefs.getPref('pref_currency_enabled'))
 			return;
 
@@ -58,12 +60,12 @@ MCE.currency={
 
 	// Get rate from cache only; if that doesn't work,
 	// the calling code must fail gracefully.
-	getRate:function(from,to)
+	getRate(from,to)
 	{
 		return this.iface.getCache(from,to);
 	},
 
-        init:function()
+        init()
         {
 		var uc1='';
 		for(var i=0;i<this.unambiguous_currency_symbols.length;i++) {
@@ -436,5 +438,3 @@ MCE.currency={
 };
 
 MCE.currency.init();
-
-}

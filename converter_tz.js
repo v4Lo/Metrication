@@ -1,4 +1,5 @@
-if (MCE!=undefined && MCE.applicationName=='Converter' && !MCE.finishedLoading) {
+"use strict";
+
 MCE.tzUtil = {
   tzLegitRegexp: '',
 
@@ -33,7 +34,7 @@ MCE.tzUtil = {
   },
   
   // returns an offset in hours
-  get_local_offset:function()
+  get_local_offset()
   {
     var D=new Date();
     return -D.getTimezoneOffset()/60;
@@ -41,7 +42,7 @@ MCE.tzUtil = {
   
   // tz is a timezone of the form +/-xxxx or DST, CET, GMT, etc
   // returns an offset in hours
-  get_tz_offset:function(tz)
+  get_tz_offset(tz)
   {
     // Is it +xxxx or -xxxx?
     /*
@@ -70,7 +71,7 @@ MCE.tzUtil = {
     return undefined;
   },
 
-  validate_hour:function(hour)
+  validate_hour(hour)
   {
     if (hour===undefined || hour==='' || hour>23) {
       return false;
@@ -78,7 +79,7 @@ MCE.tzUtil = {
     return true;
   },
 
-  validate_minute:function(minutes)
+  validate_minute(minutes)
   {
     if (minutes===undefined || minutes==='' || minutes>59) {
       return false;
@@ -86,7 +87,7 @@ MCE.tzUtil = {
     return true;
   },
 
-  init:function()
+  init()
   {
     var tzLegit=new Array();
     var tzTmp;
@@ -99,5 +100,3 @@ MCE.tzUtil = {
 };
 
 MCE.tzUtil.init();
-
-}

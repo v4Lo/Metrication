@@ -1,4 +1,5 @@
-if (MCE!=undefined && MCE.applicationName=='Converter' && !MCE.finishedLoading) {
+"use strict";
+
 MCE.prefs={
 	/*
 		Defaults: type: 'boolean', init: true, manual: false
@@ -42,8 +43,6 @@ MCE.prefs={
 		pref_custom_single:{
 			manual: true,
 		},
-		pref_unit_enabled:{},
-		pref_time_enabled:{},
 		pref_currency_enabled:{},
 		pref_myCurrency:{
 			type: 'string',
@@ -53,7 +52,6 @@ MCE.prefs={
 			type: 'string',
 			manual: true,
 		},
-		pref_custom_convert_selection:{},
 		pref_thou_sep:{
 			type: 'string',
 			init: ',',
@@ -66,9 +64,6 @@ MCE.prefs={
 			init: false,
 		},
 		pref_only_show_converted:{
-			init: false,
-		},
-		pref_replace_original:{
 			init: false,
 		},
 		pref_default_unit:{
@@ -108,13 +103,9 @@ MCE.prefs={
 	prefs:{
 	},
 
-	// Have we cached the prefs?
-	prefs_cached:false,
-	
 	// public; direct use encouraged
-	getPref:function(pref)
+	getPref(pref)
 	{
-		this.iface.buildCache();
 		if (this.prefs[pref]==undefined) {
 			MCE.iface.log("Unknown preference: "+pref);
 			return null;
@@ -123,21 +114,18 @@ MCE.prefs={
 	},
 	
 	// public; direct use encouraged
-	setPref:function(pref, val)
+	setPref(pref, val)
 	{
-		if (!this.iface._writePref(pref, val)) {
-			return false;
-		}
 		this.prefs[pref]=val;
 		return true;
 	},
 
-	prefExists:function(pref)
+	prefExists(pref)
 	{
 		return(this.pref_descriptor[pref]!=undefined);
 	},
 
-	getPrefType:function(pref)
+	getPrefType(pref)
 	{
 		if (!this.prefExists(pref))
 			return undefined;
@@ -146,7 +134,7 @@ MCE.prefs={
 		return this.pref_descriptor[pref].type;
 	},
 
-	getPrefDefault:function(pref)
+	getPrefDefault(pref)
 	{
 		if (!this.prefExists(pref))
 			return undefined;
@@ -157,7 +145,7 @@ MCE.prefs={
 		return '';
 	},
 
-	isPrefManual:function(pref)
+	isPrefManual(pref)
 	{
 		if (!this.prefExists(pref))
 			return undefined;
@@ -165,6 +153,4 @@ MCE.prefs={
 			return false;
 		return this.pref_descriptor[pref].manual;
 	},
-}
-
 }
