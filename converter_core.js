@@ -252,7 +252,7 @@ MCE.core = {
 				!this.isConvertibleMIME(d.contentType))
 				return false;
 			if (d.nodeType == 1) {
-				if (d.nodeName != 'SCRIPT' && d.nodeName != 'STYLE') {
+				if (d.nodeName != 'SCRIPT' && d.nodeName != 'STYLE' && d.nodeName != 'PRE' && d.classList.contains('notranslate')) {
 					d_original = d.cloneNode(true);
 					if (this.convertElement(d.firstChild, single)) {
 						// Not bubbling by default, that would cause all parents to get cached!
@@ -423,7 +423,7 @@ MCE.core = {
 		Update: I used to have "([a-z]{3,4}", but that didn't match Z and NT.
 		Changed to "([a-z]{1,4}", hope there aren't any side effects.
 		 */
-		var re = new RegExp("\b([0-9]{1,2}):?([0-9]{2})(:([0-9]{2}))?(\\.[0-9]+)?[\\s]*(am|a\\.m\\.|pm|p\\.m\\.)?([\\s]*([+\\-][0-9]{4})|[\\s]*(" + MCE.tzUtil.tzLegitRegexp + "))?", "i");
+		var re = new RegExp("\\b([0-9]{1,2}):?([0-9]{2})(:([0-9]{2}))?(\\.[0-9]+)?[\\s]*(am|a\\.m\\.|pm|p\\.m\\.)?([\\s]*([+\\-][0-9]{4})|[\\s]*(" + MCE.tzUtil.tzLegitRegexp + "))?", "i");
 		var result = re.exec(word);
 		if (
 			result &&
@@ -693,7 +693,6 @@ MCE.core = {
 			//debug: alert('Matching this: '+word);
 			if (result && result[2] && result[10] && (result[10].substring(result[10].length - 1) != '-')) {
 				if(result[10] != 'f' && result[10] != 'c') { // only false positives
-					console.log(result[10]);
 					//debug: alert('Match -- ['+result[1]+'] -- ['+result[2]+']');
 					var tmpTest = result[2];
 					var tmp_idx = result[2].indexOf("/");
