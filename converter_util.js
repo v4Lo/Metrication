@@ -24,22 +24,14 @@ MCE.util = {
 	},
 
 	smartRound(v, unit) {
-		if (MCE.premium != undefined) {
-			var premiumRound = MCE.premium.premiumRound(v, unit);
-			if (premiumRound != undefined) {
-				return premiumRound;
-			}
-		}
-
 		var vStr = new String(v);
 
 		// no decimals -- return as such
 		if (vStr.indexOf('.') == -1)
 			return this.addSeparators(vStr);
 
-		// value larger than 100 -- return without decimals
 		if (v > 100) {
-			return this.addSeparators(Math.round(v));
+			return this.addSeparators(Math.round(v * 100) / 100);
 		}
 
 		var log = this.floorLog10(vStr);

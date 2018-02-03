@@ -423,7 +423,7 @@ MCE.core = {
 		Update: I used to have "([a-z]{3,4}", but that didn't match Z and NT.
 		Changed to "([a-z]{1,4}", hope there aren't any side effects.
 		 */
-		var re = new RegExp("([0-9]{1,2}):?([0-9]{2})(:([0-9]{2}))?(\\.[0-9]+)?[\\s]*(am|a\\.m\\.|pm|p\\.m\\.)?([\\s]*([+\\-][0-9]{4})|[\\s]*(" + MCE.tzUtil.tzLegitRegexp + "))?", "i");
+		var re = new RegExp("\b([0-9]{1,2}):?([0-9]{2})(:([0-9]{2}))?(\\.[0-9]+)?[\\s]*(am|a\\.m\\.|pm|p\\.m\\.)?([\\s]*([+\\-][0-9]{4})|[\\s]*(" + MCE.tzUtil.tzLegitRegexp + "))?", "i");
 		var result = re.exec(word);
 		if (
 			result &&
@@ -448,7 +448,7 @@ MCE.core = {
 		}
 
 		// UTC+N, UTC-N, GMT+N, GMT-N
-		var re = /([0-9]{1,2}):([0-9]{2})(:([0-9]{2}))?(\.[0-9]{1,2})?[\s]*[\(]?(UTC|GMT)([+\-])([0-9]{1,2})[\)]?/;
+		var re = /\b([0-9]{1,2}):([0-9]{2})(:([0-9]{2}))?(\.[0-9]{1,2})?[\s]*[\(]?(UTC|GMT)([+\-])([0-9]{1,2})[\)]?/; // no \b
 		var result = re.exec(word);
 		if (result) {
 			tmp = {
@@ -464,7 +464,7 @@ MCE.core = {
 
 		// Added version with mandatory colon, because there are some formats
 		// which were "tricking" the optional regexp
-		var re = new RegExp("([0-9]{1,2}):([0-9]{2})(:([0-9]{2}))?(\.[0-9]{1,2})?[\\s]*(am|a\\.m\\.|pm|p\\.m\\.)?([\\s]*([+\\-][0-9]{4})|[\\s]*(" + MCE.tzUtil.tzLegitRegexp + "))?", "i");
+		var re = new RegExp("\\b([0-9]{1,2}):([0-9]{2})(:([0-9]{2}))?(\.[0-9]{1,2})?[\\s]*(am|a\\.m\\.|pm|p\\.m\\.)?([\\s]*([+\\-][0-9]{4})|[\\s]*(" + MCE.tzUtil.tzLegitRegexp + "))?", "i");
 		var result = re.exec(word);
 		if (
 			result &&
@@ -490,7 +490,7 @@ MCE.core = {
 
 		// There used to be a question mark after the am/pm test, but I removed it
 		// because that was matching (and converting) "2009" and such.
-		var re = /([0-9]{1,2}):?([0-9]{2})(:([0-9]{2}))?[\s]*(am|a\.m\.|pm|p\.m\.)/i;
+		var re = /\b([0-9]{1,2}):?([0-9]{2})(:([0-9]{2}))?[\s]*(am|a\.m\.|pm|p\.m\.)/i;
 		var result = re.exec(word);
 		if (
 			result &&
@@ -506,7 +506,7 @@ MCE.core = {
 			results.push(tmp);
 		}
 
-		var re = /([0-9]{1,2})[\s]*(am|a\.m\.|pm|p\.m\.)([\s]*([+\-][0-9]{4})|[\s]*([A-Z]{3,4}))?/i;
+		var re = /\b([0-9]{1,2})[\s]*(am|a\.m\.|pm|p\.m\.)([\s]*([+\-][0-9]{4})|[\s]*([A-Z]{3,4}))?/i;
 		var result = re.exec(word);
 		if (
 			result &&
@@ -549,7 +549,7 @@ MCE.core = {
 		// If found, we convert the whole thing to inches and return as if we
 		// encountered the corresponding string in inches using decimal notation
 		// instead of fractions.
-		var re = /(([0-9]*)['′’])?([0-9]+)([\s]+|[\-])([0-9]+\/[0-9]+)[\s\-]?('{2}|″|"|inches|inch|in|in.)/i;
+		var re = /\b(([0-9]*)['′’])?([0-9]+)([\s]+|[\-])([0-9]+\/[0-9]+)[\s\-]?('{2}|″|"|inches|inch|in|in.)/i;
 		var result = re.exec(word);
 		if (result) {
 			if (!result[1])
@@ -570,7 +570,7 @@ MCE.core = {
 		}
 		
 
-		var re = /([0-9]*)['′’]([0-9]+)([\s]+|[\-])([0-9\/]+)/;
+		var re = /\b([0-9]*)['′’]([0-9]+)([\s]+|[\-])([0-9\/]+)/;
 		var result = re.exec(word);
 		if (result) {
 			tmp = {
@@ -589,7 +589,7 @@ MCE.core = {
 		// ["]? at the end of the first regexp, because it would never match the
 		// final double quote, even if it's there, since it's optional and there's
 		// nothing afterwards to force the regexp algorithm to use it.
-		var re = /([0-9]+)['′’][ ]*([0-9]{1,2})["″]/;
+		var re = /\b([0-9]+)['′’][ ]*([0-9]{1,2})["″]/;
 		var result = re.exec(word);
 		if (result) {
 			tmp = {
@@ -601,7 +601,7 @@ MCE.core = {
 			tmp.index = word.indexOf(result[0]);
 			results.push(tmp);
 		} else {
-			var re = /([0-9]+)['′’][ ]*([0-9]{1,2})/;
+			var re = /\b([0-9]+)['′’][ ]*([0-9]{1,2})/;
 			var result = re.exec(word);
 			if (result) {
 				tmp = {
@@ -623,7 +623,7 @@ MCE.core = {
 		// to
 		// ([\\-]?[0-9.][0-9.,\\/]*)[\\s]*
 		// in order to accept "10&deg; F"
-		var re = new RegExp("([\\-]?[0-9.][0-9.,\\/]*)[\\s]*(" + MCE.extended_symbols.join('|').replace(/\./g, "\\.") + ")", "i");
+		var re = new RegExp("([\\B\\-]?\\b[0-9.][0-9.,\\/]*)[\\s]*(" + MCE.extended_symbols.join('|').replace(/\./g, "\\.") + ")", "i");
 		var result = re.exec(word);
 		if ((result) && (result[1]) && (result[2])) {
 			var pos = MCE.util.inArray(result[2].toLowerCase().replace(/[\s]+/g, ' '), MCE.extended_symbols_raw);
@@ -686,84 +686,103 @@ MCE.core = {
 		// period-fractions, we need better safeguards too.
 		// var re = /([\-]?)([\d,.]+)[ ]*([^ .,!?;+\(\)0-9\s]+)/[ignore this bracket]
 
-		var re = /([\-]?)([\d]+\.|[\d]+|\.|[\d]+,)([\s]*|-)([\d]*)([^ .,!?;+\(\)0-9\s]+)/;
+		var re = /([\B\-]?)\b([\d]+\.|[\d]+|\.|[\d]+,)([\s]*|-)([\d]*)([^ .,!?;+\(\)0-9\s]+)/;
 		if (re.exec(word)) {
-			var re = new RegExp("([\\-]?)(((([\\d]+[.]?)+(,[0-9]+)?)|([\\d]*\\.[\\d]+))([/][0-9]+)?)[\\s]*(thousand|million)?[\\s\\-]*([" + MCE.symbol_1 + "][" + MCE.symbol_2plus + "]*)", "i");
+			var re = new RegExp("([\\B\\-]?)\\b(((([\\d]+[.]?)+(,[0-9]+)?)|([\\d]*\\.[\\d]+))([/][0-9]+)?)[\\s]*(thousand|million)?[\\s\\-]*([" + MCE.symbol_1 + "][" + MCE.symbol_2plus + "]*)", "i");
 			var result = re.exec(word);
 			//debug: alert('Matching this: '+word);
-			// Must have the first (result), or the whole thing blows for null results
-			if ((result) && (result[2]) && (result[10]) && (result[10].substring(result[10].length - 1) != '-')) {
-				//debug: alert('Match -- ['+result[1]+'] -- ['+result[2]+']');
-				var tmpTest = result[2];
-				var tmp_idx = result[2].indexOf("/");
-				if (tmp_idx != -1 && tmp_idx != result[2].length - 1) {
-					var resultMembers = result[2].split("/");
-					var i;
-					for (i = 0; i < resultMembers.length; i++) {
-						resultMembers[i] = MCE.util.determine_separators(resultMembers[i]);
+			if (result && result[2] && result[10] && (result[10].substring(result[10].length - 1) != '-')) {
+				if(result[10] != 'f' && result[10] != 'c') { // only false positives
+					console.log(result[10]);
+					//debug: alert('Match -- ['+result[1]+'] -- ['+result[2]+']');
+					var tmpTest = result[2];
+					var tmp_idx = result[2].indexOf("/");
+					if (tmp_idx != -1 && tmp_idx != result[2].length - 1) {
+						var resultMembers = result[2].split("/");
+						var i;
+						for (i = 0; i < resultMembers.length; i++) {
+							resultMembers[i] = MCE.util.determine_separators(resultMembers[i]);
+						}
+						result[2] = this.computeFraction(resultMembers.join("/"));
 					}
-					result[2] = this.computeFraction(resultMembers.join("/"));
-				}
-				var multi = 1;
-				if (result[9]) {
-					if (result[9] == 'million') {
-						multi = 1000000;
-					} else {
-						multi = 1000;
+					var multi = 1;
+					if (result[9]) {
+						if (result[9] == 'million') {
+							multi = 1000000;
+						} else {
+							multi = 1000;
+						}
 					}
+					tmp = {
+						parser: 'regular comma'
+					};
+					tmp.value = result[1] + result[2];
+					tmp.unit = MCE.util.simplify(result[10].toLowerCase());
+					tmp.match = MCE.util.simplify(result[0]);
+					tmp.index = word.indexOf(result[0]);
+					tmp.multiplier = multi;
+					results.push(tmp);
 				}
-				tmp = {
-					parser: 'regular comma'
-				};
-				tmp.value = result[1] + result[2];
-				tmp.unit = MCE.util.simplify(result[10].toLowerCase());
-				tmp.match = MCE.util.simplify(result[0]);
-				tmp.index = word.indexOf(result[0]);
-				tmp.multiplier = multi;
-				results.push(tmp);
 			}
 
-			var re = new RegExp("([\\-]?)((([\\d]+[\\,]?)+(\\.[0-9]+)?)([/][0-9]+)?)[\\s]*(thousand|million)?[\\s]*([" + MCE.symbol_1 + "][" + MCE.symbol_2plus + "]*)", "i");
+			var re = new RegExp("([\\B\\-]?)\\b((([\\d]+[\\,]?)+(\\.[0-9]+)?)([/][0-9]+)?)[\\s]*(thousand|million)?[\\s]*([" + MCE.symbol_1 + "][" + MCE.symbol_2plus + "]*)", "i");
 			var result = re.exec(word);
 			//debug: alert('Matching this: '+word);
 			// Must have the first (result), or the whole thing blows for null results
 			if ((result) && (result[2]) && (result[8]) && (result[8].substring(result[8].length - 1) != '-')) {
-				//debug: alert('Match -- ['+result[1]+'] -- ['+result[2]+']');
-				var tmpTest = result[2];
-				var tmp_idx = result[2].indexOf("/");
-				if (tmp_idx != -1 && tmp_idx != result[2].length - 1) {
-					var resultMembers = result[2].split("/");
-					for (i = 0; i < resultMembers.length; i++) {
-						resultMembers[i] = MCE.util.determine_separators(resultMembers[i]);
+				if(result[8] != 'f' && result[8] != 'c') { // only false positives
+					//debug: alert('Match -- ['+result[1]+'] -- ['+result[2]+']');
+					var tmpTest = result[2];
+					var tmp_idx = result[2].indexOf("/");
+					if (tmp_idx != -1 && tmp_idx != result[2].length - 1) {
+						var resultMembers = result[2].split("/");
+						for (i = 0; i < resultMembers.length; i++) {
+							resultMembers[i] = MCE.util.determine_separators(resultMembers[i]);
+						}
+						result[2] = this.computeFraction(resultMembers.join("/"));
 					}
-					result[2] = this.computeFraction(resultMembers.join("/"));
-				}
-				var multi = 1;
-				if (result[7]) {
-					if (result[7] == 'million') {
-						multi = 1000000;
-					} else {
-						multi = 1000;
+					var multi = 1;
+					if (result[7]) {
+						if (result[7] == 'million') {
+							multi = 1000000;
+						} else {
+							multi = 1000;
+						}
 					}
+					tmp = {
+						parser: 'regular period'
+					};
+					tmp.value = result[1] + result[2];
+					tmp.unit = MCE.util.simplify(result[8].toLowerCase());
+					tmp.match = MCE.util.simplify(result[0]);
+					tmp.index = word.indexOf(result[0]);
+					tmp.multiplier = multi;
+					results.push(tmp);
 				}
-				tmp = {
-					parser: 'regular period'
-				};
-				tmp.value = result[1] + result[2];
-				tmp.unit = MCE.util.simplify(result[8].toLowerCase());
-				tmp.match = MCE.util.simplify(result[0]);
-				tmp.index = word.indexOf(result[0]);
-				tmp.multiplier = multi;
-				results.push(tmp);
 			}
 		}
 
+		// Explicitly looking for 10 foot 1/5, 10-foot-1/6, etc
+		// This is an exact replica of the above, but without the integer part for inches
+		re = /\b([0-9]+)[\s\-]*(foot|feet|ft|'|`)[\s\-]*(([0-9]+)\/([0-9]+)[\s\-]*)([\s]*(inches|inch|in))?/i;
+		result = re.exec(word);
+		if (result && result[5] > 0) {
+			tmp = {
+				parser: 'explicit 10 foot 1/5'
+			};
+			tmp.value = 12 * result[1] + result[4] / result[5];
+			tmp.unit = 'in';
+			tmp.match = result[0];
+			tmp.index = word.indexOf(result[0]);
+			results.push(tmp);
+		}
+		
 		// Explicitly looking for 10 foot 5, 10-foot-6, "10 feet 5 inches", etc
 		// Note: I removed support for "10 feet, 5 inches" because it was messing
 		// up legitimate lists like "10 feet, 12 feet" -- if this is really needed
 		// it must be separated into a new test.
 		// Be advised that this is quite finely tuned, don't mess with it lightly.
-		re = /([0-9]+)[\s\-]*(foot|feet|ft|'|`)[\s\-]*([0-9]*(\.[0-9]+)?)[\s\-]*?(([0-9]+)\/([0-9]+)[\s\-]*)?([\s]*(inches|inch|in))?/i;
+		re = /\b([0-9]+)[\s\-]*(foot|feet|ft|'|`)[\s\-]*([0-9]*(\.[0-9]+)?)[\s\-]*?(([0-9]+)\/([0-9]+)[\s\-]*)?([\s]*(inches|inch|in))?/i;
 		result = re.exec(word);
 		if (result) {
 			var fract = 0;
@@ -784,24 +803,9 @@ MCE.core = {
 			tmp.index = word.indexOf(result[0]);
 			results.push(tmp);
 		}
-
-		// Explicitly looking for 10 foot 1/5, 10-foot-1/6, etc
-		// This is an exact replica of the above, but without the integer part for inches
-		re = /([0-9]+)[\s\-]*(foot|feet|ft|'|`)[\s\-]*(([0-9]+)\/([0-9]+)[\s\-]*)([\s]*(inches|inch|in))?/i;
-		result = re.exec(word);
-		if (result && result[5] > 0) {
-			tmp = {
-				parser: 'explicit 10 foot 1/5'
-			};
-			tmp.value = 12 * result[1] + result[4] / result[5];
-			tmp.unit = 'in';
-			tmp.match = result[0];
-			tmp.index = word.indexOf(result[0]);
-			results.push(tmp);
-		}
-
+		
 		// Explicitly looking for 11 stone 4
-		re = /([0-9]+)[\s]+stone(s)?[\s]+([0-9]+)/;
+		re = /\b([0-9]+)[\s]+stone(s)?[\s]+([0-9]+)/;
 		result = re.exec(word);
 		if (result) {
 			tmp = {
@@ -819,7 +823,7 @@ MCE.core = {
 	number_regexp_next: 10,
 
 	number_regexp:
-	"(" +
+	"\b(" +
 	"([\\d]+\\,)+[\\d]+\\.(-|[\\d]+)|" + /* 123,123,123.123456 */
 	"([\\d]+\\.)+[\\d]+\\,(-|[\\d]+)|" + /* 123.123.123,123456 */
 	"([\\d]+\\,)+[\\d]+|" + /* 123,123,123 */
@@ -872,7 +876,7 @@ MCE.core = {
 			}
 		}
 
-		re = new RegExp("([a-z]?)(([a-z]{3})|([a-z]{2})[\\s]*\\$)[\\s]*" + MCE.core.number_regexp, "i");
+		re = new RegExp("\b([a-z]?)(([a-z]{3})|([a-z]{2})[\\s]*\\$)[\\s]*" + MCE.core.number_regexp, "i");
 		result = re.exec(word);
 		if (
 			result &&
@@ -933,7 +937,7 @@ MCE.core = {
 			}
 		}
 
-		re = new RegExp("(([" + MCE.currency.unambiguous_regexp + "])|" + MCE.currency.unambiguous_notation.notation + ")[\\s]*" + MCE.core.number_regexp);
+		re = new RegExp("\b(([" + MCE.currency.unambiguous_regexp + "])|" + MCE.currency.unambiguous_notation.notation + ")[\\s]*" + MCE.core.number_regexp);
 		result = re.exec(word);
 		if (result) {
 			var unCount = MCE.currency.unambiguous_notation.ISO.length;
@@ -963,7 +967,7 @@ MCE.core = {
 			results.push(tmp);
 		}
 
-		re = new RegExp("\\$[\s]*(" + MCE.core.number_regexp + ")");
+		re = new RegExp("\b\\$[\s]*(" + MCE.core.number_regexp + ")");
 		result = re.exec(word);
 		if (result) {
 			tmp = {
@@ -977,7 +981,7 @@ MCE.core = {
 			results.push(tmp);
 		}
 
-		re = new RegExp("(" + MCE.core.number_regexp + ")[\s]*\\$");
+		re = new RegExp("\b(" + MCE.core.number_regexp + ")[\s]*\\$");
 		result = re.exec(word);
 		if (result) {
 			tmp = {
