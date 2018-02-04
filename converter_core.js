@@ -252,7 +252,7 @@ MCE.core = {
 				!this.isConvertibleMIME(d.contentType))
 				return false;
 			if (d.nodeType == 1) {
-				if (d.nodeName != 'SCRIPT' && d.nodeName != 'STYLE' && d.nodeName != 'PRE' && d.classList.contains('notranslate')) {
+				if (d.nodeName != 'SCRIPT' && d.nodeName != 'STYLE' && d.nodeName != 'PRE' && !d.classList.contains('notranslate')) {
 					d_original = d.cloneNode(true);
 					if (this.convertElement(d.firstChild, single)) {
 						// Not bubbling by default, that would cause all parents to get cached!
@@ -549,7 +549,7 @@ MCE.core = {
 		// If found, we convert the whole thing to inches and return as if we
 		// encountered the corresponding string in inches using decimal notation
 		// instead of fractions.
-		var re = /\b(([0-9]*)['′’])?([0-9]+)([\s]+|[\-])([0-9]+\/[0-9]+)[\s\-]?('{2}|″|"|inches|inch|in|in.)/i;
+		var re = /\b(([0-9]*)['′’])?([0-9]+)([\s]+|[\-])([0-9]+\/[0-9]+)[\s\-]?('{2}|″|"|”|inches|inch|in|inchs)(\b|\s)/i;
 		var result = re.exec(word);
 		if (result) {
 			if (!result[1])
@@ -570,7 +570,7 @@ MCE.core = {
 		}
 		
 
-		var re = /\b([0-9]*)['′’]([0-9]+)([\s]+|[\-])([0-9\/]+)/;
+		var re = /\b([0-9]*)['′’]([0-9]+)([\s]+|[\-])([0-9\/]+)\b/;
 		var result = re.exec(word);
 		if (result) {
 			tmp = {
@@ -589,7 +589,7 @@ MCE.core = {
 		// ["]? at the end of the first regexp, because it would never match the
 		// final double quote, even if it's there, since it's optional and there's
 		// nothing afterwards to force the regexp algorithm to use it.
-		var re = /\b([0-9]+)['′’][ ]*([0-9]{1,2})["″]/;
+		var re = /\b([0-9]+)['′’][\s]*([0-9]{1,2})["″”]/;
 		var result = re.exec(word);
 		if (result) {
 			tmp = {
@@ -601,7 +601,7 @@ MCE.core = {
 			tmp.index = word.indexOf(result[0]);
 			results.push(tmp);
 		} else {
-			var re = /\b([0-9]+)['′’][ ]*([0-9]{1,2})/;
+			var re = /\b([0-9]+)['′’][\s]*([0-9]{1,2})\b/;
 			var result = re.exec(word);
 			if (result) {
 				tmp = {
@@ -614,7 +614,7 @@ MCE.core = {
 				results.push(tmp);
 			}
 		}
-
+		
 		// Let's check for extended symbols
 		// Double backslashes below because we need to escape the backslash itself to
 		// get it across the string format. One hour of cursing; idiot, I should have known this.
@@ -623,7 +623,7 @@ MCE.core = {
 		// to
 		// ([\\-]?[0-9.][0-9.,\\/]*)[\\s]*
 		// in order to accept "10&deg; F"
-		var re = new RegExp("([\\B\\-]?\\b[0-9.][0-9.,\\/]*)[\\s]*(" + MCE.extended_symbols.join('|').replace(/\./g, "\\.") + ")", "i");
+		var re = new RegExp("([\\-]?\\b[0-9\\.][0-9\\.,\\/]*)[\\s]*(" + MCE.extended_symbols.join('|').replace(/\./g, "\\.") + ")(\\b|\\s)", "i");
 		var result = re.exec(word);
 		if ((result) && (result[1]) && (result[2])) {
 			var pos = MCE.util.inArray(result[2].toLowerCase().replace(/[\s]+/g, ' '), MCE.extended_symbols_raw);
@@ -686,9 +686,9 @@ MCE.core = {
 		// period-fractions, we need better safeguards too.
 		// var re = /([\-]?)([\d,.]+)[ ]*([^ .,!?;+\(\)0-9\s]+)/[ignore this bracket]
 
-		var re = /([\B\-]?)\b([\d]+\.|[\d]+|\.|[\d]+,)([\s]*|-)([\d]*)([^ .,!?;+\(\)0-9\s]+)/;
+		var re = /([\-]?)\b([\d]+\.|[\d]+|\.|[\d]+,)([\s]*|-)([\d]*)([^ .,!?;+\(\)0-9\s]+)/;
 		if (re.exec(word)) {
-			var re = new RegExp("([\\B\\-]?)\\b(((([\\d]+[.]?)+(,[0-9]+)?)|([\\d]*\\.[\\d]+))([/][0-9]+)?)[\\s]*(thousand|million)?[\\s\\-]*([" + MCE.symbol_1 + "][" + MCE.symbol_2plus + "]*)", "i");
+			var re = new RegExp("([\\-]?)\\b(((([\\d]+[.]?)+(,[0-9]+)?)|([\\d]*\\.[\\d]+))([/][0-9]+)?)[\\s]*(thousand|million)?[\\s\\-]*([" + MCE.symbol_1 + "][" + MCE.symbol_2plus + "]*)(\\b|\\s)", "i");
 			var result = re.exec(word);
 			//debug: alert('Matching this: '+word);
 			if (result && result[2] && result[10] && (result[10].substring(result[10].length - 1) != '-')) {
@@ -724,7 +724,7 @@ MCE.core = {
 				}
 			}
 
-			var re = new RegExp("([\\B\\-]?)\\b((([\\d]+[\\,]?)+(\\.[0-9]+)?)([/][0-9]+)?)[\\s]*(thousand|million)?[\\s]*([" + MCE.symbol_1 + "][" + MCE.symbol_2plus + "]*)", "i");
+		var re = new RegExp("([\\-]?)\\b((([\\d]+[\\,]?)+(\\.[0-9]+)?)([/][0-9]+)?)[\\s]*(thousand|million)?[\\s]*([" + MCE.symbol_1 + "][" + MCE.symbol_2plus + "]*)(\\b|\\s)", "i");
 			var result = re.exec(word);
 			//debug: alert('Matching this: '+word);
 			// Must have the first (result), or the whole thing blows for null results
@@ -763,7 +763,7 @@ MCE.core = {
 
 		// Explicitly looking for 10 foot 1/5, 10-foot-1/6, etc
 		// This is an exact replica of the above, but without the integer part for inches
-		re = /\b([0-9]+)[\s\-]*(foot|feet|ft|'|`)[\s\-]*(([0-9]+)\/([0-9]+)[\s\-]*)([\s]*(inches|inch|in))?/i;
+		re = /\b([0-9]+)[\s\-]*(foot|feet|ft|'|`)[\s\-]*(([0-9]+)\/([0-9]+)[\s\-]*)([\s]*(inches|inch|in|inchs))?\b/i;
 		result = re.exec(word);
 		if (result && result[5] > 0) {
 			tmp = {
@@ -781,7 +781,7 @@ MCE.core = {
 		// up legitimate lists like "10 feet, 12 feet" -- if this is really needed
 		// it must be separated into a new test.
 		// Be advised that this is quite finely tuned, don't mess with it lightly.
-		re = /\b([0-9]+)[\s\-]*(foot|feet|ft|'|`)[\s\-]*([0-9]*(\.[0-9]+)?)[\s\-]*?(([0-9]+)\/([0-9]+)[\s\-]*)?([\s]*(inches|inch|in))?/i;
+		re = /\b([0-9]+)[\s\-]*(foot|feet|ft|'|`)[\s\-]*([0-9]*(\.[0-9]+)?)[\s\-]*?(([0-9]+)\/([0-9]+)[\s\-]*)?([\s]*(inches|inch|in|inchs))?\b/i;
 		result = re.exec(word);
 		if (result) {
 			var fract = 0;
@@ -804,7 +804,7 @@ MCE.core = {
 		}
 		
 		// Explicitly looking for 11 stone 4
-		re = /\b([0-9]+)[\s]+stone(s)?[\s]+([0-9]+)/;
+		re = /\b([0-9]+)[\s]+stone(s)?[\s]+([0-9]+)\b/;
 		result = re.exec(word);
 		if (result) {
 			tmp = {

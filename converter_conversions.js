@@ -49,6 +49,8 @@ MCE.conv_table = new String("\
 		inch             in2m\tmetric \
 		inches           in2m\tmetric \
 		\u2033           in2m\tmetric \
+		\u0022           in2m\tmetric \
+		\u201D           in2m\tmetric \
 		\
 		mil              mil2m\tmetric \
 		\
