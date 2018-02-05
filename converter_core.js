@@ -252,7 +252,7 @@ MCE.core = {
 				!this.isConvertibleMIME(d.contentType))
 				return false;
 			if (d.nodeType == 1) {
-				if (d.nodeName != 'SCRIPT' && d.nodeName != 'STYLE' && d.nodeName != 'PRE' && !d.classList.contains('notranslate')) {
+				if (d.nodeName != 'SCRIPT' && d.nodeName != 'STYLE' && d.nodeName != 'PRE' && d.nodeName != 'TEMPLATE' && !d.classList.contains('notranslate')) {
 					d_original = d.cloneNode(true);
 					if (this.convertElement(d.firstChild, single)) {
 						// Not bubbling by default, that would cause all parents to get cached!
@@ -591,7 +591,7 @@ MCE.core = {
 		// nothing afterwards to force the regexp algorithm to use it.
 		var re = /\b([0-9]+)['′’][\s]*([0-9]{1,2})["″”]/;
 		var result = re.exec(word);
-		if (result) {
+		if (result && !/^0\d/.exec(result[1]) && !/^0\d/.exec(result[2])) {
 			tmp = {
 				parser: 'informal Imperial'
 			};
@@ -603,7 +603,7 @@ MCE.core = {
 		} else {
 			var re = /\b([0-9]+)['′’][\s]*([0-9]{1,2})\b/;
 			var result = re.exec(word);
-			if (result) {
+			if (result && !/^0\d/.exec(result[1]) && !/^0\d/.exec(result[2])) {
 				tmp = {
 					parser: 'informal Imperial II'
 				};
@@ -615,17 +615,11 @@ MCE.core = {
 			}
 		}
 		
-		// Let's check for extended symbols
-		// Double backslashes below because we need to escape the backslash itself to
-		// get it across the string format. One hour of cursing; idiot, I should have known this.
-		// Changed
-		// ([\\-]?[0-9.][0-9.,\\/]*)[\\s]+
-		// to
-		// ([\\-]?[0-9.][0-9.,\\/]*)[\\s]*
-		// in order to accept "10&deg; F"
+		// "10&deg; F"
 		var re = new RegExp("([\\-]?\\b[0-9\\.][0-9\\.,\\/]*)[\\s]*(" + MCE.extended_symbols.join('|').replace(/\./g, "\\.") + ")(\\b|\\s)", "i");
 		var result = re.exec(word);
-		if ((result) && (result[1]) && (result[2])) {
+		console.log(re)
+		if ((result) && (result[1]) && (result[2]) && !/^[\-]?0\d/.exec(result[1])) {
 			var pos = MCE.util.inArray(result[2].toLowerCase().replace(/[\s]+/g, ' '), MCE.extended_symbols_raw);
 			if (pos > -1) {
 				//debug: alert('extended match: '+result[1]+'--'+result[2]);
@@ -692,7 +686,7 @@ MCE.core = {
 			var result = re.exec(word);
 			//debug: alert('Matching this: '+word);
 			if (result && result[2] && result[10] && (result[10].substring(result[10].length - 1) != '-')) {
-				if(result[10] != 'f' && result[10] != 'c') { // only false positives
+				if(result[10] != 'f' && result[10] != 'c' && !/^0\d/.exec(result[2])) { // fixes a lot of  false positives
 					//debug: alert('Match -- ['+result[1]+'] -- ['+result[2]+']');
 					var tmpTest = result[2];
 					var tmp_idx = result[2].indexOf("/");
@@ -729,7 +723,7 @@ MCE.core = {
 			//debug: alert('Matching this: '+word);
 			// Must have the first (result), or the whole thing blows for null results
 			if ((result) && (result[2]) && (result[8]) && (result[8].substring(result[8].length - 1) != '-')) {
-				if(result[8] != 'f' && result[8] != 'c') { // only false positives
+				if(result[8] != 'f' && result[8] != 'c' && !/^0\d/.exec(result[2])) { // fixes a lot of  false positives
 					//debug: alert('Match -- ['+result[1]+'] -- ['+result[2]+']');
 					var tmpTest = result[2];
 					var tmp_idx = result[2].indexOf("/");
