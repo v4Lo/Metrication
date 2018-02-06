@@ -130,7 +130,7 @@ MCE.core = {
 			if (conv_symbol) {
 				if (register_extended && (atom.indexOf('_') > -1)) {
 					MCE.extended_symbols_raw.push(atom.replace(/_/g, ' '));
-					MCE.extended_symbols.push(atom.replace(/_/g, '[\\s]+'));
+					MCE.extended_symbols.push(atom.replace(/_/g, '[\\s]*'));
 				}
 				conv_symbols.push(atom);
 				var letter = atom.substring(0, 1);
@@ -423,7 +423,7 @@ MCE.core = {
 		Update: I used to have "([a-z]{3,4}", but that didn't match Z and NT.
 		Changed to "([a-z]{1,4}", hope there aren't any side effects.
 		 */
-		var re = new RegExp("\\b([0-9]{1,2}):?([0-9]{2})(:([0-9]{2}))?(\\.[0-9]+)?[\\s]*(am|a\\.m\\.|pm|p\\.m\\.)?([\\s]*([+\\-][0-9]{4})|[\\s]*(" + MCE.tzUtil.tzLegitRegexp + "))?", "i");
+		var re = new RegExp("\\b([0-9]{1,2}):?([0-9]{2})(:([0-9]{2}))?(\\.[0-9]+)?[\\s]*(am|a\\.m\\.|pm|p\\.m\\.)?([\\s]*([+\\-][0-9]{4})|[\\s]*(" + MCE.tzUtil.tzLegitRegexp + "))?\\b", "i");
 		var result = re.exec(word);
 		if (
 			result &&
@@ -464,7 +464,7 @@ MCE.core = {
 
 		// Added version with mandatory colon, because there are some formats
 		// which were "tricking" the optional regexp
-		var re = new RegExp("\\b([0-9]{1,2}):([0-9]{2})(:([0-9]{2}))?(\.[0-9]{1,2})?[\\s]*(am|a\\.m\\.|pm|p\\.m\\.)?([\\s]*([+\\-][0-9]{4})|[\\s]*(" + MCE.tzUtil.tzLegitRegexp + "))?", "i");
+		var re = new RegExp("\\b([0-9]{1,2}):([0-9]{2})(:([0-9]{2}))?(\.[0-9]{1,2})?[\\s]*(am|a\\.m\\.|pm|p\\.m\\.)?([\\s]*([+\\-][0-9]{4})|[\\s]*(" + MCE.tzUtil.tzLegitRegexp + "))?\\b", "i");
 		var result = re.exec(word);
 		if (
 			result &&
@@ -490,7 +490,7 @@ MCE.core = {
 
 		// There used to be a question mark after the am/pm test, but I removed it
 		// because that was matching (and converting) "2009" and such.
-		var re = /\b([0-9]{1,2}):?([0-9]{2})(:([0-9]{2}))?[\s]*(am|a\.m\.|pm|p\.m\.)/i;
+		var re = /\b([0-9]{1,2}):?([0-9]{2})(:([0-9]{2}))?[\s]*(am|a\.m\.|pm|p\.m\.)\b/i;
 		var result = re.exec(word);
 		if (
 			result &&
@@ -506,7 +506,7 @@ MCE.core = {
 			results.push(tmp);
 		}
 
-		var re = /\b([0-9]{1,2})[\s]*(am|a\.m\.|pm|p\.m\.)([\s]*([+\-][0-9]{4})|[\s]*([A-Z]{3,4}))?/i;
+		var re = /\b([0-9]{1,2})[\s]*(am|a\.m\.|pm|p\.m\.)([\s]*([+\-][0-9]{4})|[\s]*([A-Z]{3,4}))?\b/i;
 		var result = re.exec(word);
 		if (
 			result &&
@@ -616,9 +616,8 @@ MCE.core = {
 		}
 		
 		// "10&deg; F"
-		var re = new RegExp("([\\-]?\\b[0-9\\.][0-9\\.,\\/]*)[\\s]*(" + MCE.extended_symbols.join('|').replace(/\./g, "\\.") + ")(\\b|\\s)", "i");
+		var re = new RegExp("([\\-]?(?:\\b|\\.)[0-9][0-9\\.,\\/]*)[\\s]*(" + MCE.extended_symbols.join('|').replace(/\./g, "\\.") + ")(\\b|\\s)", "i");
 		var result = re.exec(word);
-		console.log(re)
 		if ((result) && (result[1]) && (result[2]) && !/^[\-]?0\d/.exec(result[1])) {
 			var pos = MCE.util.inArray(result[2].toLowerCase().replace(/[\s]+/g, ' '), MCE.extended_symbols_raw);
 			if (pos > -1) {
@@ -630,6 +629,7 @@ MCE.core = {
 				tmp.unit = MCE.extended_symbols_raw[pos].replace(/ /g, '_');
 				tmp.match = result[0];
 				tmp.index = word.indexOf(result[0]);
+				
 				results.push(tmp);
 			}
 		}

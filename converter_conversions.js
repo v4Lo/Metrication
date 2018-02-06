@@ -107,7 +107,7 @@ MCE.conv_table = new String("\
 		kilometer        km2in\tImperial \
 		kilometers       km2in\tImperial \
 		\
-		" + String.fromCharCode(181) + "m               microm2in\tImperial \
+		\u00B5m               microm2in\tImperial \
 		micrometre       microm2in\tImperial \
 		micrometres      microm2in\tImperial \
 		micrometer       microm2in\tImperial \
@@ -121,12 +121,12 @@ MCE.conv_table = new String("\
 		centimeter       cm2in\tImperial \
 		centimeters      cm2in\tImperial \
 		\
-		" + String.fromCharCode(176) + "celsius         c2f\tFahrenheit \
-		" + String.fromCharCode(176) + "celcius         c2f\tFahrenheit \
-		" + String.fromCharCode(176) + "c               c2f\tFahrenheit \
-		" + String.fromCharCode(176) + "_celsius        c2f\tFahrenheit \
-		" + String.fromCharCode(176) + "_celcius        c2f\tFahrenheit \
-		" + String.fromCharCode(176) + "_c              c2f\tFahrenheit \
+		\u00B0celsius         c2f\tFahrenheit \
+		\u00B0celcius         c2f\tFahrenheit \
+		\u00B0c               c2f\tFahrenheit \
+		\u00B0_celsius        c2f\tFahrenheit \
+		\u00B0_celcius        c2f\tFahrenheit \
+		\u00B0_c              c2f\tFahrenheit \
 		\u00BAcelsius         c2f\tFahrenheit \
 		\u00BAcelcius         c2f\tFahrenheit \
 		\u00BAc               c2f\tFahrenheit \
@@ -148,10 +148,10 @@ MCE.conv_table = new String("\
 		degree_c         c2f\tFahrenheit \
 		degrees_c        c2f\tFahrenheit \
 		\
-		" + String.fromCharCode(176) + "f               f2c\tCelsius \
-		" + String.fromCharCode(176) + "fahrenheit      f2c\tCelsius \
-		" + String.fromCharCode(176) + "_fahrenheit     f2c\tCelsius \
-		" + String.fromCharCode(176) + "_f              f2c\tCelsius \
+		\u00B0f               f2c\tCelsius \
+		\u00B0fahrenheit      f2c\tCelsius \
+		\u00B0_fahrenheit     f2c\tCelsius \
+		\u00B0_f              f2c\tCelsius \
 		\u00BAf               f2c\tCelsius \
 		\u00BAfahrenheit      f2c\tCelsius \
 		\u00BA_fahrenheit     f2c\tCelsius \
@@ -194,8 +194,6 @@ MCE.conv_table = new String("\
 		\
 		degree           deg2all \
 		degrees          deg2all \
-		deg              deg2all \
-		" + String.fromCharCode(176) + "            deg2all \
 		\
 		m/s              mps2all \
 		mps              mps2all \
