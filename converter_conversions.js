@@ -192,9 +192,6 @@ MCE.conv_table = new String("\
 		kilometer_per_hour kmph2miph\tImperial \
 		kilometre_per_hour kmph2miph\tImperial \
 		\
-		degree           deg2all \
-		degrees          deg2all \
-		\
 		m/s              mps2all \
 		mps              mps2all \
 		meters_per_second mps2all \
@@ -259,9 +256,9 @@ MCE.conv_table = new String("\
 		sq_feet          sqft2sqm\tmetric \
 		sq_foot          sqft2sqm\tmetric \
 		sf               sqft2sqm\tmetric \
-		foot" + String.fromCharCode(178) + " sqft2sqm\tmetric \
-		feet" + String.fromCharCode(178) + " sqft2sqm\tmetric \
-		ft" + String.fromCharCode(178) + " sqft2sqm\tmetric \
+		foot\u00B2       sqft2sqm\tmetric \
+		feet\u00B2       sqft2sqm\tmetric \
+		ft\u00B2         sqft2sqm\tmetric \
 		ft^2             sqft2sqm\tmetric \
 		foot^2           sqft2sqm\tmetric \
 		feet^2           sqft2sqm\tmetric \
@@ -270,11 +267,11 @@ MCE.conv_table = new String("\
 		square_metres    sqm2sqft\tImperial \
 		square_meter     sqm2sqft\tImperial \
 		square_metre     sqm2sqft\tImperial \
-		m" + String.fromCharCode(178) + " sqm2sqft\tImperial \
-		meter" + String.fromCharCode(178) + " sqm2sqft\tImperial \
-		metre" + String.fromCharCode(178) + " sqm2sqft\tImperial \
-		meters" + String.fromCharCode(178) + " sqm2sqft\tImperial \
-		metres" + String.fromCharCode(178) + " sqm2sqft\tImperial \
+		m\u00B2          sqm2sqft\tImperial \
+		meter\u00B2      sqm2sqft\tImperial \
+		metre\u00B2      sqm2sqft\tImperial \
+		meters\u00B2     sqm2sqft\tImperial \
+		metres\u00B2     sqm2sqft\tImperial \
 		m^2              sqm2sqft\tImperial \
 		meter^2          sqm2sqft\tImperial \
 		metre^2          sqm2sqft\tImperial \
@@ -283,10 +280,10 @@ MCE.conv_table = new String("\
 		\
 		cc               cc2cuin\tImperial \
 		cm^3             cc2cuin\tImperial \
-		cm" + String.fromCharCode(179) + " cc2cuin\tImperial \
+		cm\u00B3         cc2cuin\tImperial \
 		cu_in            cuin2cc\tmetric \
 		in^3             cuin2cc\tmetric \
-		in" + String.fromCharCode(179) + " cuin2cc\tmetric \
+		in\u00B3         cuin2cc\tmetric \
 		\
 		mpg              mpg2lptm\tmetric \
 		miles_per_gallon mpg2lptm\tmetric \

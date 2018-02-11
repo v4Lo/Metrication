@@ -9,7 +9,7 @@ TO DO:
  */
 
 "use strict";
- 
+
 MCE.core = {
 	convertible_MIME_types: [
 		"text/html",
@@ -345,12 +345,12 @@ MCE.core = {
 			rawText = rawText.substring(wordData.index + wordData.match.length, rawText.length);
 			processText = processText.substring(wordData.index + wordData.match.length, processText.length);
 			if (cr && !cr.inhibit) {
-				if (cr.only_show_converted || false ) { // TODO dont replace original MCE.prefs.getPref('pref_only_show_converted')
+				if (cr.only_show_converted || false) { // TODO dont replace original MCE.prefs.getPref('pref_only_show_converted')
 					convertedTmp = cr.outCustom;
 				} else {
 					convertedTmp = cr.inValue + " " + cr.inUnit + " = " + cr.outCustom;
 				}
-				if (false) {  // TODO dont replace original
+				if (false) { // TODO dont replace original
 					convertedText += convertedTmp;
 				} else {
 					convertedText += " (" + convertedTmp + ")";
@@ -568,7 +568,6 @@ MCE.core = {
 			tmp.index = word.indexOf(result[0]);
 			results.push(tmp);
 		}
-		
 
 		var re = /\b([0-9]*)['′’]([0-9]+)([\s]+|[\-])([0-9\/]+)\b/;
 		var result = re.exec(word);
@@ -614,7 +613,7 @@ MCE.core = {
 				results.push(tmp);
 			}
 		}
-		
+
 		// "10&deg; F"
 		var re = new RegExp("([\\-]?(?:\\b|\\.)[0-9][0-9\\.,\\/]*)[\\s]*(" + MCE.extended_symbols.join('|').replace(/\./g, "\\.") + ")(\\b|\\s)", "i");
 		var result = re.exec(word);
@@ -629,7 +628,7 @@ MCE.core = {
 				tmp.unit = MCE.extended_symbols_raw[pos].replace(/ /g, '_');
 				tmp.match = result[0];
 				tmp.index = word.indexOf(result[0]);
-				
+
 				results.push(tmp);
 			}
 		}
@@ -684,9 +683,10 @@ MCE.core = {
 		if (re.exec(word)) {
 			var re = new RegExp("([\\-]?)\\b(((([\\d]+[.]?)+(,[0-9]+)?)|([\\d]*\\.[\\d]+))([/][0-9]+)?)[\\s]*(thousand|million)?[\\s\\-]*([" + MCE.symbol_1 + "][" + MCE.symbol_2plus + "]*)(\\b|\\s)", "i");
 			var result = re.exec(word);
+
 			//debug: alert('Matching this: '+word);
 			if (result && result[2] && result[10] && (result[10].substring(result[10].length - 1) != '-')) {
-				if(result[10] != 'f' && result[10] != 'c' && !/^0\d/.exec(result[2])) { // fixes a lot of  false positives
+				if (result[10] != 'f' && result[10] != 'c' && !/^0\d/.exec(result[2]) && result[0] != "1st") { // fixes a lot of  false positives
 					//debug: alert('Match -- ['+result[1]+'] -- ['+result[2]+']');
 					var tmpTest = result[2];
 					var tmp_idx = result[2].indexOf("/");
@@ -718,12 +718,13 @@ MCE.core = {
 				}
 			}
 
-		var re = new RegExp("([\\-]?)\\b((([\\d]+[\\,]?)+(\\.[0-9]+)?)([/][0-9]+)?)[\\s]*(thousand|million)?[\\s]*([" + MCE.symbol_1 + "][" + MCE.symbol_2plus + "]*)(\\b|\\s)", "i");
+			var re = new RegExp("([\\-]?)\\b((([\\d]+[\\,]?)+(\\.[0-9]+)?)([/][0-9]+)?)[\\s]*(thousand|million)?[\\s]*([" + MCE.symbol_1 + "][" + MCE.symbol_2plus + "]*)(\\b|\\s)", "i");
 			var result = re.exec(word);
+			console.log(result)
 			//debug: alert('Matching this: '+word);
 			// Must have the first (result), or the whole thing blows for null results
 			if ((result) && (result[2]) && (result[8]) && (result[8].substring(result[8].length - 1) != '-')) {
-				if(result[8] != 'f' && result[8] != 'c' && !/^0\d/.exec(result[2])) { // fixes a lot of  false positives
+				if (result[8] != 'f' && result[8] != 'c' && !/^0\d/.exec(result[2]) && result[0] != "1st") { // fixes a lot of  false positives
 					//debug: alert('Match -- ['+result[1]+'] -- ['+result[2]+']');
 					var tmpTest = result[2];
 					var tmp_idx = result[2].indexOf("/");
@@ -769,7 +770,7 @@ MCE.core = {
 			tmp.index = word.indexOf(result[0]);
 			results.push(tmp);
 		}
-		
+
 		// Explicitly looking for 10 foot 5, 10-foot-6, "10 feet 5 inches", etc
 		// Note: I removed support for "10 feet, 5 inches" because it was messing
 		// up legitimate lists like "10 feet, 12 feet" -- if this is really needed
@@ -796,7 +797,7 @@ MCE.core = {
 			tmp.index = word.indexOf(result[0]);
 			results.push(tmp);
 		}
-		
+
 		// Explicitly looking for 11 stone 4
 		re = /\b([0-9]+)[\s]+stone(s)?[\s]+([0-9]+)\b/;
 		result = re.exec(word);
