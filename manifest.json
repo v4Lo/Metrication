@@ -4,7 +4,7 @@
 	"name": "Metrication",
 	"version": "1.5",
 
-	"description": "A browser extension for contextual unit and currency converting.",
+	"description": "A browser extension for contextual unit metrication.",
 
 	"applications": {
 		"gecko": {
