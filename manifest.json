@@ -2,7 +2,7 @@
 
 	"manifest_version": 2,
 	"name": "Metrication",
-	"version": "1.4.2",
+	"version": "1.5",
 
 	"description": "A browser extension for contextual unit and currency converting.",
 
@@ -15,7 +15,7 @@
 	"content_scripts": [
 		{
 			"matches": ["<all_urls>"],
-			"js": ["converter_conversions.js", "converter_util.js", "converter_async.js", "converter_core.js", "converter_iface.js", "converter_tz.js", "converter_prefs.js", "converter_currency.js", "converter_currency_iface.js", "metrication.js"],
+			"js": ["what.js","converter_conversions.js", "converter_util.js", "converter_async.js", "converter_core.js", "converter_iface.js", "converter_tz.js", "converter_prefs.js", "converter_currency.js", "converter_currency_iface.js", "metrication.js"],
 			"run_at" : "document_idle"
 		}
 	]

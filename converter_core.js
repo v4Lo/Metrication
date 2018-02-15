@@ -543,6 +543,8 @@ MCE.core = {
 		var results = new Array();
 		var tmp;
 
+		word = removeDiacritics(word);
+		
 		// Let's start by checking for the awkward Imperial notations.
 
 		// First checking for egineering format (1'2 1/32" or 1'2-1/32").
@@ -720,7 +722,6 @@ MCE.core = {
 
 			var re = new RegExp("([\\-]?)\\b((([\\d]+[\\,]?)+(\\.[0-9]+)?)([/][0-9]+)?)[\\s]*(thousand|million)?[\\s]*([" + MCE.symbol_1 + "][" + MCE.symbol_2plus + "]*)(\\b|\\s)", "i");
 			var result = re.exec(word);
-			console.log(result)
 			//debug: alert('Matching this: '+word);
 			// Must have the first (result), or the whole thing blows for null results
 			if ((result) && (result[2]) && (result[8]) && (result[8].substring(result[8].length - 1) != '-')) {
