@@ -593,15 +593,6 @@ MCE.iface = {
 
 		onSecurityChange (aWebProgress, aRequest, aState) {},
 	},
-
-	retrieveURL (url, key, eventHandler) {
-		var async = new MCE.async({
-				'url': url,
-				'key': key,
-				'eventHandler': eventHandler
-			});
-		async.execute();
-	},
 }
 
 window.addEventListener("load", function load(event) {

@@ -787,8 +787,8 @@ MCE.converters = {
 	},
 
 	internal_currency(v) {
-		var myCurrency = MCE.prefs.getPref('pref_myCurrency');
-		var thisCurrency = v.currency;
+		const myCurrency = "EUR";
+		let thisCurrency = v.currency;
 		if (thisCurrency == '$') {
 			thisCurrency = this.ISOfromDollars();
 			if (!thisCurrency) {
@@ -797,23 +797,19 @@ MCE.converters = {
 				};
 			}
 		}
-		var myCurrency;
-		if (MCE.premium == undefined) {
-			myCurrency = MCE.prefs.getPref('pref_myCurrency');
-		} else {
-			myCurrency = MCE.premium.getMyCurrency(thisCurrency);
-		}
 		if (!myCurrency || thisCurrency == myCurrency) {
 			return {
 				inhibit: true
 			};
 		}
-		var rate = MCE.currency.getRate(thisCurrency, myCurrency);
+		const rate = MCE.currency.getRate(thisCurrency, myCurrency);
+
 		if (!rate) {
 			return {
 				inhibit: true
 			};
 		}
+		
 		return {
 			inValue: v.value,
 			inUnit: thisCurrency,

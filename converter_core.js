@@ -818,7 +818,7 @@ MCE.core = {
 	number_regexp_next: 10,
 
 	number_regexp:
-	"\b(" +
+	"(" +
 	"([\\d]+\\,)+[\\d]+\\.(-|[\\d]+)|" + /* 123,123,123.123456 */
 	"([\\d]+\\.)+[\\d]+\\,(-|[\\d]+)|" + /* 123.123.123,123456 */
 	"([\\d]+\\,)+[\\d]+|" + /* 123,123,123 */
@@ -830,15 +830,17 @@ MCE.core = {
 	")",
 
 	getCurrencyWord(word) {
-		if (!MCE.prefs.getPref('pref_currency_enabled')) {
-			return new Array();
-		}
+		
 		var results = new Array();
+		
+		if(!MCE.prefs.getPref('pref_currency_enabled')) {
+			return results
+		}
+		
 		var tmp;
 		var re;
 		var result;
 		var i;
-
 		// First, a rough test to exclude long strings of digits
 		if (/[\d.,\-]+[\s]*[a-z$]{3}/i.exec(word)) {
 			re = new RegExp(MCE.core.number_regexp + "[\\s]*(([a-z]{3})|([a-z]{2})[\\s]*\\$)([a-z]?)", "i");
@@ -871,7 +873,7 @@ MCE.core = {
 			}
 		}
 
-		re = new RegExp("\b([a-z]?)(([a-z]{3})|([a-z]{2})[\\s]*\\$)[\\s]*" + MCE.core.number_regexp, "i");
+		re = new RegExp("([a-z]?)(([a-z]{3})|([a-z]{2})[\\s]*\\$)[\\s]*" + MCE.core.number_regexp, "i");
 		result = re.exec(word);
 		if (
 			result &&
@@ -962,7 +964,7 @@ MCE.core = {
 			results.push(tmp);
 		}
 
-		re = new RegExp("\b\\$[\s]*(" + MCE.core.number_regexp + ")");
+		re = new RegExp("\\$[\s]*(" + MCE.core.number_regexp + ")");
 		result = re.exec(word);
 		if (result) {
 			tmp = {
@@ -976,7 +978,7 @@ MCE.core = {
 			results.push(tmp);
 		}
 
-		re = new RegExp("\b(" + MCE.core.number_regexp + ")[\s]*\\$");
+		re = new RegExp("(" + MCE.core.number_regexp + ")[\s]*\\$");
 		result = re.exec(word);
 		if (result) {
 			tmp = {
@@ -989,7 +991,6 @@ MCE.core = {
 			};
 			results.push(tmp);
 		}
-
 		return results;
 	},
 

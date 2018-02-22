@@ -1,107 +1,51 @@
 "use strict";
 
-MCE.currency={
-	unambiguous_regexp:null,
-	unambiguous_notation:null,
-
-	timedRefreshRates: function()
-	{
-		MCE.currency.refreshRates();
-		if (window==undefined)
-			return;
-
-		window.setTimeout(MCE.currency.timedRefreshRates, MCE.currency.iface.cacheExpiration);
-	},
-
-	refreshRates: function()
-	{
-		return; // TODO FIX CURRENCY
-		if (!MCE.prefs.getPref('pref_currency_enabled'))
-			return;
-
-		var myCurrency=MCE.prefs.getPref('pref_myCurrency');
-		if (myCurrency && this.iface.cacheExpired(myCurrency)) {
-			MCE.iface.log("Retrieving rates for primary currency ("+myCurrency+")");
-			MCE.iface.retrieveURL(this.getRatesURL(myCurrency), "", this.onRetrieve);
-		}
-
-		var altCurrency = MCE.prefs.getPref('pref_foreignCurrency');
-		if (altCurrency && this.iface.cacheExpired(altCurrency)) {
-			MCE.iface.log("Retrieving rates for secondary currency ("+altCurrency+")");
-			MCE.iface.retrieveURL(this.getRatesURL(altCurrency), "", this.onRetrieve);
-		}
-	},
-
-	getRatesURL: function(curr)
-	{
-		return "http://xr.the-converter.co/rates/"+curr;
-	},
-
-	onRetrieve: function(event)
-	{
-		// "this" is whoever triggered the event,
-		// and we want to go back to the home context.
-		MCE.currency.finishRefreshingRates(event);
-	},
-
-	finishRefreshingRates: function(result)
-	{
-		if (!result.clean) {
-			MCE.iface.log("Fatal exception thrown when retrieving exchange rates: "+result.exception);
-			return;
-		}
-		if (result.status!=200) {
-			MCE.iface.log("Bad request status while retrieving exchange rates ("+result.status+")");
-			return;
-		}
-		var ratesData=JSON.parse(result.responseText);
-		this.iface.saveCache(ratesData.base, ratesData.rates);
-	},
+MCE.currency = {
+	unambiguous_regexp: null,
+	unambiguous_notation: null,
 
 	// Get rate from cache only; if that doesn't work,
 	// the calling code must fail gracefully.
-	getRate(from,to)
-	{
-		return this.iface.getCache(from,to);
+	getRate(from, to) {
+		return MCE.currency.iface.getCache(from, to);
 	},
 
-        init()
-        {
-		var uc1='';
-		for(var i=0;i<this.unambiguous_currency_symbols.length;i++) {
-			uc1+=this.unambiguous_currency_symbols[i].symbol;
+	init() {
+		var uc1 = '';
+		for (var i = 0; i < this.unambiguous_currency_symbols.length; i++) {
+			uc1 += this.unambiguous_currency_symbols[i].symbol;
 		}
-		this.unambiguous_regexp=MCE.core.regexpise(uc1);
+		this.unambiguous_regexp = MCE.core.regexpise(uc1);
 
-		var ucn={
-			notation:'',
-			ISO:[]
+		var ucn = {
+			notation: '',
+			ISO: []
 		};
-		for(var i=0;i<this.unambiguous_currency_notation.length;i++) {
-			if (i>0) ucn.notation+='|';
-			ucn.notation+='('+MCE.core.regexpise(this.unambiguous_currency_notation[i].notation)+')';
+		for (var i = 0; i < this.unambiguous_currency_notation.length; i++) {
+			if (i > 0)
+				ucn.notation += '|';
+			ucn.notation += '(' + MCE.core.regexpise(this.unambiguous_currency_notation[i].notation) + ')';
 			ucn.ISO.push(this.unambiguous_currency_notation[i].ISO);
 		}
-		this.unambiguous_notation=ucn;
-
-        },
+		this.unambiguous_notation = ucn;
+	},
 
 	/*
 	These are the currencies Google knows of as of 2009-04.
 	2009-11: added RSD
 
 	TODO: A process will be needed for updating this list.
-	*/
+	 */
 	currencies:
 	[
-		'AED','ANG','ARS','AUD','BGN','BHD','BOB','BND','BRL','BWP','CAD','CHF',
-		'CLP','CNY','COP','CSD','CRC','CZK','DKK','DOP','DZD','EEK','EGP','EUR',
-		'FJD','GBP','HNL','HKD','HRK','HUF','IDR','ILS','INR','ISK','JMD','JOD',
-		'JPY','KES','KRW','KWD','KYD','KZT','LBP','LKR','LTL','LVL','MAD','MDL',
-		'MKD','MUR','MXN','MYR','NAD','NGN','NIO','NOK','NPR','NZD','OMR','PEN',
-		'PGK','PHP','PKR','PLN','PYG','QAR','RON','RSD','RUB','SAR','SCR','SEK','SGD',
-		'SKK','SLL','SVC','THB','TND','TRY','TTD','TWD','TZS','UAH','UGX',
-		'USD','UYU','UZS','VEB','VND','YER','ZAR','ZMK'
+		'AED', 'ANG', 'ARS', 'AUD', 'BGN', 'BHD', 'BOB', 'BND', 'BRL', 'BWP', 'CAD', 'CHF',
+		'CLP', 'CNY', 'COP', 'CSD', 'CRC', 'CZK', 'DKK', 'DOP', 'DZD', 'EEK', 'EGP', 'EUR',
+		'FJD', 'GBP', 'HNL', 'HKD', 'HRK', 'HUF', 'IDR', 'ILS', 'INR', 'ISK', 'JMD', 'JOD',
+		'JPY', 'KES', 'KRW', 'KWD', 'KYD', 'KZT', 'LBP', 'LKR', 'LTL', 'LVL', 'MAD', 'MDL',
+		'MKD', 'MUR', 'MXN', 'MYR', 'NAD', 'NGN', 'NIO', 'NOK', 'NPR', 'NZD', 'OMR', 'PEN',
+		'PGK', 'PHP', 'PKR', 'PLN', 'PYG', 'QAR', 'RON', 'RSD', 'RUB', 'SAR', 'SCR', 'SEK', 'SGD',
+		'SKK', 'SLL', 'SVC', 'THB', 'TND', 'TRY', 'TTD', 'TWD', 'TZS', 'UAH', 'UGX',
+		'USD', 'UYU', 'UZS', 'VEB', 'VND', 'YER', 'ZAR', 'ZMK'
 	],
 
 	/*
@@ -109,98 +53,77 @@ MCE.currency={
 	This is the list of unambiguous currency symbols.
 
 	Notes:
-	* ¥ is used for both the Japanese Yen (JPY) and the Chinese Yuan (CNY)
-	* £ might be used for some Lira currencies according to Wikipedia, but
-	  I doubt there's any significant ambiguity overall so I'll leave it here
-	  for now.
-	*/
+	 * ¥ is used for both the Japanese Yen (JPY) and the Chinese Yuan (CNY)
+	 * £ might be used for some Lira currencies according to Wikipedia, but
+	I doubt there's any significant ambiguity overall so I'll leave it here
+	for now.
+	 */
 	unambiguous_currency_symbols:
-	[
-		{
+	[{
 			symbol: '€',
 			ISO: 'EUR'
-		},
-		{
+		}, {
 			symbol: '£',
 			ISO: 'GBP'
-		},
-		{
+		}, {
 			symbol: '₤',
 			ISO: 'GBP'
-		},
-		{
+		}, {
 			symbol: '₪',
 			ISO: 'ILS'
-		},
-		{
+		}, {
 			symbol: '฿',
 			ISO: 'THB'
-		},
-		{
+		}, {
 			symbol: '₦',
 			ISO: 'NGN'
-		},
-		{
+		}, {
 			symbol: '₲',
 			ISO: 'PYG'
-		},
-		{
+		}, {
 			symbol: '₱',
 			ISO: 'PHP'
-		},
-		{
+		}, {
 			symbol: "円",
 			ISO: 'JPY'
-		},
-		{
+		}, {
 			symbol: "￥",
 			ISO: 'JPY'
 		}
 	],
 
 	unambiguous_currency_notation:
-	[
-		{
+	[{
 			notation: 'Kč',
 			ISO: 'CZK'
-		},
-		{
+		}, {
 			notation: 'lei',
 			ISO: 'RON'
-		},
-		{
+		}, {
 			notation: 'leu',
 			ISO: 'RON'
-		},
-		{
+		}, {
 			notation: 'Yen',
 			ISO: 'JPY'
-		},
-		{
+		}, {
 			notation: 'euro',
 			ISO: 'EUR'
-		},
-		{
+		}, {
 			notation: 'euros',
 			ISO: 'EUR'
-		},
-		{
+		}, {
 			notation: 'Sk',
 			ISO: 'SKK'
-		},
-		{
+		}, {
 			notation: "dollars",
 			ISO: "$"
-		},
-		{
+		}, {
 			notation: "dollar",
 			ISO: "$"
-		},
-		{
+		}, {
 			notation: "zł",
 			ISO: "PLN"
-		},
-		{
+		}, {
 			notation: "руб",
 			ISO: 'RUB'
 		}
@@ -208,15 +131,14 @@ MCE.currency={
 
 	/*
 	This is the complete list of currencies from http://en.wikipedia.org/wiki/ISO_4217
-	
+
 	I didn't bother cleaning it up much because it's only used for labeling the
 	preferences -- the Converter only uses MCE.currency.currencies on the business end.
 
 	At the end there are a few extra currency names supported by Google
 	but not listed in the ISO code.
-	*/
-	currency_names:
-	{
+	 */
+	currency_names: {
 		'AED': 'United Arab Emirates dirham',
 		'AFN': 'Afghani',
 		'ALL': 'Lek',
@@ -400,39 +322,37 @@ MCE.currency={
 		'VEB': 'Venezuelan bolivar'
 	},
 
-	TLD_currency:
-	{
-		'com':	'USD',
-		'au':	'AUD',
-		'ca':	'CAD',
-		'nz':	'NZD',
-		'bn':	'BND',
-		'fj':	'FJD',
-		'hk':	'HKD',
-		'jm':	'JMD',
-		'ky':	'KYD',
-		'na':	'NAD',
-		'sg':	'SGD',
-		'tt':	'TTD',
-		'tw':	'TWD'
+	TLD_currency: {
+		'com': 'USD',
+		'au': 'AUD',
+		'ca': 'CAD',
+		'nz': 'NZD',
+		'bn': 'BND',
+		'fj': 'FJD',
+		'hk': 'HKD',
+		'jm': 'JMD',
+		'ky': 'KYD',
+		'na': 'NAD',
+		'sg': 'SGD',
+		'tt': 'TTD',
+		'tw': 'TWD'
 	},
 
 	// These then get a "$" sign appended
-	dollar_aliases:
-	{
-		'US':	'USD',
-		'AU':	'AUD',
-		'CA':	'CAD',
-		'NZ':	'NZD',
-		'BN':	'BND',
-		'FJ':	'FJD',
-		'HK':	'HKD',
-		'JM':	'JMD',
-		'KY':	'KYD',
-		'NA':	'NAD',
-		'SG':	'SGD',
-		'TT':	'TTD',
-		'TW':	'TWD'
+	dollar_aliases: {
+		'US': 'USD',
+		'AU': 'AUD',
+		'CA': 'CAD',
+		'NZ': 'NZD',
+		'BN': 'BND',
+		'FJ': 'FJD',
+		'HK': 'HKD',
+		'JM': 'JMD',
+		'KY': 'KYD',
+		'NA': 'NAD',
+		'SG': 'SGD',
+		'TT': 'TTD',
+		'TW': 'TWD'
 	}
 
 };

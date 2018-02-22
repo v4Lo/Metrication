@@ -23,7 +23,6 @@ MCE.prefs={
 			init: 0,
 			manual: true,
 		},
-
 		pref_24h:{
 			manual: true,
 		},
@@ -43,7 +42,6 @@ MCE.prefs={
 		pref_custom_single:{
 			manual: true,
 		},
-		pref_currency_enabled:{},
 		pref_myCurrency:{
 			type: 'string',
 			manual: true,
@@ -96,7 +94,9 @@ MCE.prefs={
 			type:'string',
 			init:'24',
 		},
-		pref_custom_enabled:{},
+		pref_currency_enabled:{
+			init:true,
+		},
 	},
 	
 	// Contains the cached prefs
