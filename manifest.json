@@ -1,28 +1,26 @@
 {
+    "manifest_version": 2,
+    "name": "Metrication",
+    "version": "1.7",
 
-	"manifest_version": 2,
-	"name": "Metrication",
-	"version": "1.6",
+    "description": "A browser extension for contextual unit metrication.",
 
-	"description": "A browser extension for contextual unit metrication.",
+    "permissions": [
+        "storage",
+        "*://api.fixer.io/*"
+    ],
 
-	"permissions": [
-		"storage",
-		"*://api.fixer.io/*"
-	],
-	
-	"applications": {
-		"gecko": {
-			"id": "metrication@example.com"
-		}
-	},
+    "applications": {
+        "gecko": {
+            "id": "metrication@example.com"
+        }
+    },
 
-	"content_scripts": [
-		{
-			"matches": ["<all_urls>"],
-			"js": ["what.js", "converter_conversions.js", "converter_prefs.js", "converter_util.js", "converter_core.js", "converter_tz.js",  "converter_iface.js", "converter_currency.js", "converter_currency_iface.js", "metrication.js"],
-			"run_at" : "document_idle"
-		}
-	]
-
+    "content_scripts": [{
+            "matches": ["<all_urls>"],
+            "js": ["what.js", "converter_conversions.js", "converter_prefs.js", "converter_util.js", "converter_core.js", "converter_tz.js", "converter_iface.js", "converter_currency.js", "converter_currency_iface.js", "metrication.js"],
+            "run_at": "document_idle",
+            "css": ["tooltip.css"]
+        }
+    ]
 }

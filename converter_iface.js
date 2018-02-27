@@ -193,66 +193,6 @@ MCE.iface = {
 		return true;
 	},
 
-	doWelcome() {
-		var decision = false;
-
-		// IMPORTANT! The order of the tests below is significant!
-		if (
-			(MCE.prefs.getPrefType('current_version') == MCE.prefs.PREF_INVALID) ||
-			(MCE.prefs.getCharPref('current_version') == '')) {
-			MCE.prefs.setCharPref('current_version', cver);
-			decision = 'install';
-		}
-		if (
-			(MCE.prefs.getPrefType('first_version') == MCE.prefs.PREF_INVALID) ||
-			(MCE.prefs.getCharPref('first_version') == '')) {
-			MCE.prefs.setCharPref('first_version', MCE.prefs.getCharPref('current_version'));
-		}
-		var pver = MCE.prefs.getCharPref('current_version');
-		if (pver != cver) {
-			MCE.prefs.setCharPref('current_version', cver);
-			decision = 'upgrade';
-		}
-		if (!decision) {
-			// business as usual
-			return false;
-		}
-
-		MCE.MCE.prefs.setPref("last_upgraded", new String(new Date().getTime()));
-
-		// install
-		if (decision == 'install') {
-			MCE.iface.installButton();
-			this.showLocation("http://www.the-converter.co/welcome.php?ver=" + cver);
-			return true;
-		}
-
-		// upgrade
-		var fver = MCE.prefs.getCharPref('first_version');
-
-		// Cleanup -- this has to remain here forever
-		if (pver < "1.1.4") {
-			// Install button in toolbar and remove obsolete preferennces
-			MCE.iface.installButton();
-
-			prefs = Components.classes["@mozilla.org/preferences-service;1"].
-				getService(Components.interfaces.nsIPrefService);
-
-			// Remove obsolete preference and cache
-			MCE.prefs.deleteBranch("extensions.converter.preferences.pref_fullpage_icon");
-			MCE.prefs.deleteBranch("extensions.converter.currency_data");
-
-			// Reset last tab to "basic"
-			MCE.prefs.setStringPref("extensions.converter.preferences.last_prefs_tab", "0");
-
-			// Retrieve currency rates using the new mechanism, if you had any defined
-			if (MCE.currency != undefined && MCE.currency.iface != undefined)
-				MCE.currency.timedRefreshRates();
-		}
-
-		this.showLocation("http://www.the-converter.co/whatsnew/?ver=" + cver + "&fver=" + fver + "&pver=" + pver);
-	},
-
 	getCBody(win) {
 		var cBodyT = win.document.getElementsByTagName("HTML");
 		if (cBodyT.length) {
@@ -323,102 +263,12 @@ MCE.iface = {
 		tab.addProgressListener(MCE.iface.tabProgressListener, Components.interfaces.nsIWebProgress.NOTIFY_STATE_WINDOW);
 	},
 
-	init() {
-		// Welcome first ----------------------------------------------------
-		MCE.iface.doWelcome();
-
-		// Now the proper stuff ---------------------------------------------
-		var tmpElement = document.getElementById("contentAreaContextMenu");
-		if (tmpElement)
-			tmpElement.addEventListener("popupshowing", MCE.iface.onPopup, false);
-
-		tmpElement = document.getElementById("converter-status-popup");
-		if (tmpElement)
-			tmpElement.addEventListener("popupshowing", MCE.iface.onToolboxPopup, false);
-
-		if (typeof gBrowser != 'undefined') {
-			MCE.iface.monitorTab(gBrowser.selectedBrowser);
-			var container = gBrowser.tabContainer;
-			container.addEventListener("TabSelect", MCE.iface.tabSwitched, false);
-			container.addEventListener("TabOpen", MCE.iface.tabOpened, false);
-		}
-	},
-
 	tabSwitched(event) {
 		MCE.iface.restore_status();
 	},
 
 	tabOpened(event) {
 		MCE.iface.monitorTab(gBrowser.getBrowserForTab(event.target));
-	},
-
-	/**
-	 * This function is executed when Firefox's contextual popup menu pops up.
-	 * It just triggers MCE.core.doConversion() and, depending on the
-	 * result, shows the conversion result in the popup menu.
-	 */
-	onPopup() {
-		var item = document.getElementById("context_converterselect");
-
-		// No selection -- show or hide "Convert entire page" based on preferences
-		if (!gContextMenu.isTextSelected) {
-			if (!MCE.prefs.getPref('pref_fullpage_menu')) {
-				item.hidden = true;
-				return true;
-			}
-			item.hidden = false;
-			var pageState = MCE.iface.getFunctionalPageState(gBrowser.contentWindow);
-			if (pageState & MCE.STATE_CONVERTED)
-				item.setAttribute("label", 'Restore page');
-			else if (pageState & MCE.STATE_CONVERTIBLE)
-				item.setAttribute("label", 'Convert the entire page');
-			else
-				item.hidden = true;
-			return true;
-		}
-
-		// Selection
-		/*
-		We need to address a combination of situations here:
-		1. pref_selection_menu -- ON/OFF
-		3. conversion available -- YES/NO
-
-		(3) only needs to be triggered if (1)
-		 */
-		var visible;
-		var label;
-		var sel = getBrowserSelection();
-
-		// TODO: this is a bit iffy, what if two tabs start conversion at the same time?
-		MCE.current_URI = document.URL;
-
-		if (!MCE.prefs.getPref('pref_selection_menu')) {
-			label = '';
-		} else {
-			var cr = MCE.core.doConversion(sel, false);
-			if (!cr || cr.inhibit) {
-				label = '';
-				if (MCE.prefs.getPref("pref_default_unit").length) {
-					var re = /[0-9.,]+/;
-					var match = re.exec(sel);
-					if (match) {
-						cr = MCE.core.doConversion(match[0] + ' ' + MCE.prefs.getPref("pref_default_unit"));
-						if (cr && !cr.inhibit) {
-							label = cr.inValue + " " + cr.inUnit + " = " + cr.outCustom;
-						}
-					}
-				}
-			} else {
-				label = cr.inValue + " " + cr.inUnit + " = " + cr.outCustom;
-			}
-		}
-		if (!label) {
-			item.hidden = true;
-			return false;
-		}
-		item.hidden = false;
-		item.setAttribute("label", label);
-		return true;
 	},
 
 	statusClicked(evt) {
@@ -438,84 +288,6 @@ MCE.iface = {
 	fullPageFromStatus() {
 		if (this.get_status_meta(this.get_status()).state & MCE.STATE_ENABLED)
 			this.fullPageAction(gBrowser.contentWindow);
-	},
-
-	triggerCustom(content) {
-		this.customConversion_text = content;
-		this.customConversionPopup();
-
-	},
-
-	customConversionPopup() {
-		var w = window.openDialog("chrome://converter/content/custom_conversion.xul",
-				"Metrication_custom", "centerscreen");
-		w.focus();
-	},
-
-	openPrefsWindow() {
-		var w = window.openDialog("chrome://converter/content/converterPrefDialog.xul",
-				"Metrication_preferences", "centerscreen");
-		w.focus();
-		MCE.prefsWindow = w;
-	},
-
-	custom_conversion_keyup(event) {
-		if (event.keyCode == 27) {
-			this.custom_conversion_close();
-		}
-		if (event.keyCode == 13 && event.ctrlKey) {
-			this.custom_conversion_convert();
-		}
-	},
-
-	custom_conversion_convert() {
-		if (window.document.getElementById('strict').checked) {
-			var cr = opener.MCE.core.doConversion(window.document.getElementById('beef').value, false);
-			if (cr.inUnit == undefined || cr.inhibit) {
-				window.document.getElementById('in_unit').value = 'n/a';
-			} else {
-				window.document.getElementById('in_unit').value = cr.inUnit;
-			}
-			if (cr.inValue == undefined || cr.inhibit) {
-				window.document.getElementById('in_value').value = 'n/a';
-			} else {
-				window.document.getElementById('in_value').value = cr.inValue;
-			}
-			if (cr.outCustom == undefined || cr.inhibit) {
-				window.document.getElementById('hamburger').value = '';
-			} else {
-				window.document.getElementById('hamburger').value = cr.outCustom;
-			}
-		} else {
-			window.document.getElementById('hamburger').value = opener.MCE.core.convertText(window.document.getElementById('beef').value);
-		}
-		window.document.getElementById('beef').focus();
-		window.document.getElementById('beef').select();
-	},
-
-	custom_conversion_close() {
-		MCE.prefs.setPref('pref_custom_single', window.document.getElementById('strict').checked);
-		window.close();
-	},
-
-	custom_conversion_open() {
-		window.document.getElementById('strict').checked = MCE.prefs.getPref('pref_custom_single');
-		window.document.getElementById('beef').focus();
-		window.addEventListener('keyup', function (e) {
-			MCE.iface.custom_conversion_keyup(e);
-		}, false);
-		this.custom_conversion_switch();
-		if (opener.MCE.iface.customConversion_text) {
-			window.document.getElementById('beef').value = opener.MCE.iface.customConversion_text;
-			opener.MCE.iface.customConversion_text = false;
-			this.custom_conversion_convert();
-		}
-	},
-
-	custom_conversion_switch() {
-		window.document.getElementById('in_value_box').hidden =
-			window.document.getElementById('in_unit_box').hidden =
-			!window.document.getElementById('strict').checked;
 	},
 
 	log (message) {
@@ -538,64 +310,4 @@ MCE.iface = {
 		docs.push(tmp.document);
 		return docs;
 	},
-
-	tabProgressListener: {
-		onLocationChange (aProgress, aRequest, aURI) {},
-
-		onProgressChange (aWebProgress, aRequest, curSelf, maxSelf, curTot, maxTot) {},
-
-		onSecurityChange (aWebProgress, aRequest, aState) {},
-
-		QueryInterface (aIID) {
-			if (
-				aIID.equals(Components.interfaces.nsIWebProgressListener) ||
-				aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
-				aIID.equals(Components.interfaces.nsISupports))
-				return this;
-			throw Components.results.NS_NOINTERFACE;
-		},
-
-		onStateChange (aWebProgress, aRequest, aFlag, aStatus) {
-			if (!(aFlag & Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW))
-				return;
-
-			if (
-				aFlag & Components.interfaces.nsIWebProgressListener.STATE_STOP &&
-				MCE.core.isConvertibleMIME(aRequest.contentType)) {
-				if (MCE.prefs.getPref('pref_auto_convert')) {
-					// We auto-convert *ANY* window
-					var cBody = MCE.iface.getCBody(aWebProgress.DOMWindow);
-					if (cBody) {
-						if (cBody.hasAttribute("converter_extension_converted"))
-							MCE.iface.restore_status();
-						else
-							MCE.iface.fullPageAction(aWebProgress.DOMWindow);
-					}
-					// fullPageAction() and restore_status() take care of the icon
-					return;
-				}
-			}
-
-			// We only update the icons for changes related to the current window
-			if (aWebProgress.DOMWindow != gBrowser.contentWindow)
-				return;
-
-			// Loading the current window
-			if (aFlag & Components.interfaces.nsIWebProgressListener.STATE_START)
-				MCE.iface.set_status('LOADING');
-
-			// Finished loading the current window
-			if (aFlag & Components.interfaces.nsIWebProgressListener.STATE_STOP)
-				MCE.iface.restore_status();
-		},
-
-		onStatusChange (aWebProgress, aRequest, aStatus, aMessage) {},
-
-		onSecurityChange (aWebProgress, aRequest, aState) {},
-	},
 }
-
-window.addEventListener("load", function load(event) {
-	window.removeEventListener("load", load, false); //remove this listener, no longer needed
-	MCE.iface.init();
-}, false);
